@@ -148,6 +148,15 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     )
 }
 
+// ksp 어노테이션 프로세싱을 통해 QClass 빌드하도록 설정
+pluginManager.withPlugin("com.google.devtools.ksp") {
+    kotlin {
+        sourceSets.main {
+            kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/main/kotlin"))
+        }
+    }
+}
+
 // IntelliJ IDEA 코드 스타일 설정 동기화 태스크
 tasks.register("applyKtlintToIdea") {
     group = "ide"
