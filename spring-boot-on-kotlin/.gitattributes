@@ -1,0 +1,37 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Unix-specific files
+/gradlew text eol=lf
+
+# Windows-specific files
+*.bat text eol=crlf
+
+# Binary files
+*.jar binary
+*.war binary
+*.ear binary
+*.class binary
+
+# Kotlin and Java source files
+*.kt text
+*.java text
+*.kts text
+
+# Configuration files
+*.properties text
+*.yml text
+*.yaml text
+*.json text
+*.xml text
+
+# Documentation
+*.md text
+*.txt text
+
+# Build files
+build.gradle text
+build.gradle.kts text
+settings.gradle text
+settings.gradle.kts text
+gradle.properties text
