@@ -1,0 +1,38 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      timeout: ${REDIS_TIMEOUT}
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?serverTimezone=${DB_TIMEZONE}&characterEncoding=${DB_ENCODING}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER}
+    hikari:
+      connection-timeout: ${DB_CONNECTION_TIMEOUT}
+      maximum-pool-size: ${DB_MAXIMUM_POOL_SIZE}
+      minimum-idle: ${DB_MINIMUM_IDLE}
+      idle-timeout: ${DB_IDLE_TIMEOUT}
+      max-lifetime: ${DB_MAX_LIFETIME}
+      auto-commit: ${DB_AUTO_COMMIT}
+  jpa:
+    hibernate.ddl-auto: ${JPA_DDL_AUTO}
+    show-sql: ${JPA_SHOW_SQL}
+    properties:
+      hibernate:
+        dialect: ${HIBERNATE_DIALECT}
+        format_sql: ${HIBERNATE_FORMAT_SQL}
+    open-in-view: ${JPA_OPEN_IN_VIEW}
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
+    include: common,smartwork,plobin
+
+logging:
+  level:
+    root: ${LOG_LEVEL}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %clr(%-5level) %logger{36} - %msg%n"

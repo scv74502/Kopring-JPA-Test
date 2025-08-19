@@ -1,0 +1,92 @@
+# local 전용 docker 테스트 환경 구축(코틀린 로컬 사용 가능)
+# .env 파일만 바라보기에 로컬 환경 구축 시 .env.local.example -> .env 로 변경 후 사용할 것
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - GRADLE_OPTS=-Dorg.gradle.daemon=false -Dorg.gradle.caching=false
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      # Spring 기본 설정
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SERVER_PORT=${SERVER_PORT}
+
+      # Database 설정 (컨테이너 환경에 맞게 수정)
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DRIVER=${DB_DRIVER}
+      - DB_CONNECTION_TIMEOUT=${DB_CONNECTION_TIMEOUT}
+      - DB_MAXIMUM_POOL_SIZE=${DB_MAXIMUM_POOL_SIZE}
+      - DB_MINIMUM_IDLE=${DB_MINIMUM_IDLE}
+      - DB_IDLE_TIMEOUT=${DB_IDLE_TIMEOUT}
+      - DB_MAX_LIFETIME=${DB_MAX_LIFETIME}
+      - DB_AUTO_COMMIT=${DB_AUTO_COMMIT}
+
+      # Redis 설정 (컨테이너 환경에 맞게 수정)
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_TIMEOUT=${REDIS_TIMEOUT}
+
+      # JPA 설정
+      - JPA_DDL_AUTO=${JPA_DDL_AUTO}
+      - JPA_SHOW_SQL=${JPA_SHOW_SQL}
+      - JPA_OPEN_IN_VIEW=${JPA_OPEN_IN_VIEW}
+      - HIBERNATE_DIALECT=${HIBERNATE_DIALECT}
+      - HIBERNATE_FORMAT_SQL=${HIBERNATE_FORMAT_SQL}
+
+      # 로깅 설정
+      - LOG_LEVEL=${LOG_LEVEL}
+
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 3308:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ CMD, mysqladmin, ping, -h, localhost ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    env_file:
+      - .env
+    networks:
+      - app-network
+  redis:
+    image: redis:7.2
+    container_name: redis_cache
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge
