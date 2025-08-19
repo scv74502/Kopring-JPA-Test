@@ -33,17 +33,20 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
-//    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-//    implementation("com.mysql:mysql-connector-j")
-//    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.mysql:mysql-connector-j")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("io.github.openfeign.querydsl:querydsl-jpa-spring:$queryDslVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // KSP 설정
+    ksp("io.github.openfeign.querydsl:querydsl-ksp-codegen:$queryDslVersion")
+    ksp("jakarta.annotation:jakarta.annotation-api")
+    ksp("jakarta.persistence:jakarta.persistence-api")
 }
 
 // kotlin 컴파일 관련 옵션
@@ -54,6 +57,7 @@ pluginManager.withPlugin("org.jetbrains.kotlin.jvm") {
             freeCompilerArgs.addAll(
                 "-Xjsr305=strict",
                 "-opt-in=kotlin.RequiresOptIn",
+//                "-Xuse-k2", // K2 컴파일러 사용
             )
         }
     }
